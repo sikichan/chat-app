@@ -17,8 +17,10 @@ const router = createBrowserRouter([
     path: '/register',
     element: <Register/>,
     action: async ({request}) => {
-      const formData = await request.formData()
-      const {data} = await axios.post(`${baseURL}/register`, Object.fromEntries(formData))
+      const formData = Object.fromEntries(await request.formData())
+      const results = validateUser(formData)
+      if (results) return results
+      const {data} = await axios.post(`${baseURL}/register`, formData)
       if (!data.status) {
         return data
       } else {
@@ -31,8 +33,12 @@ const router = createBrowserRouter([
     path: '/login',
     element: <Login/>,
     action: async ({request}) => {
-      const formData = await request.formData()
-      const {data} = await axios.post(`${baseURL}/login`, Object.fromEntries(formData))
+      const formData = Object.fromEntries(await request.formData())
+      console.log(formData)
+      const results = validateUser(formData)
+      console.log(results)
+      if (results) return results
+      const {data} = await axios.post(`${baseURL}/login`, formData)
       if (!data.status) {
         return data
       } else {
@@ -48,3 +54,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </RouterProvider>
   </React.StrictMode>,
 )
+
+function validateUser(user) {
+  if (!user.username.trim()) {
+    return {msg: 'Username is required'}
+  }
+  if (!user.password.trim()) {
+    return {msg: 'Password is required'}
+  }
+}
