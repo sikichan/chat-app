@@ -13,7 +13,7 @@ const register = async (req, res) => {
     res.send({status: true, user: {
       avatar: user.avatar,
       username: user.username,
-      id: user._id
+      _id: user._id
     }})
   }
   
@@ -28,10 +28,10 @@ const login = async (req, res) => {
     res.send({status: false, msg: 'The password is wrong'})
   } else {
     res.send({status: true, user: {
-      id: user._id,
+      avatar: user.avatar,
       username: user.username,
-      avatar: user.avatar
-    }})
+      _id: user._id
+    } })
   }
 }
 
@@ -40,14 +40,23 @@ const setAvatar = async (req, res) => {
   console.log(id)
   const user = await User.findOneAndUpdate({_id: id}, {avatar})
   res.send({status: true, user: {
-    id: user._id,
+    _id: user._id,
     username: user.username,
-    avatar: user.avatar
+    avatar
   }})
 }
 
+const getContactList = async (req, res) => {
+  const currentUserId = req.params.id
+  const contactList = await User.find({_id: {$ne: currentUserId}},  ).select(['username', 'avatar'])
+  res.send({
+    status: true,
+    contactList
+  })
+}
 module.exports = {
   register,
   login,
-  setAvatar
+  setAvatar,
+  getContactList
 }

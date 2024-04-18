@@ -1,8 +1,7 @@
-import { Link, useActionData, Form, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { Link, useActionData, Form } from 'react-router-dom'
+import { useState } from 'react'
 import UserForm from '../components/Container'
 import Logo from '../assets/react.svg'
-import localforage from 'localforage'
 import Input from '../components/Input'
 export default function Login() {
   const [user, setUser] = useState({
@@ -10,20 +9,14 @@ export default function Login() {
     password: ''
   })
   const actionData = useActionData()
+
   const handleChange = (e) => {
     setUser({
       ...user,
       [e.target.name]: e.target.value
     })
   }
-  const navigate = useNavigate()
-  useEffect(() => {
-    const checkUser = async () => {
-      const user = await localforage.getItem('chat-app-user')
-      if (user) navigate('/set-avatar')
-    }
-    checkUser()
-  })
+
   return (
     <>
       <UserForm>

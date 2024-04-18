@@ -6,13 +6,24 @@ import { createBrowserRouter, RouterProvider, redirect } from 'react-router-dom'
 import Chat from './views/Chat.jsx'
 import Register from './views/Register.jsx'
 import Login from './views/Login.jsx'
-import localforage from 'localforage'
 import SetAvatar from './views/SetAvatar.jsx'
+import ChatRoom from './views/ChatRoom.jsx'
 const baseURL = `http://localhost:1000/api/auth`
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Chat/>
+    element: <Chat/>,
+    loader: async () => {
+      const currentUser = JSON.parse(localStorage.getItem('chat-app-user'))
+      const {data} = await axios.get(`${baseURL}/contact-list/${currentUser._id}`)
+      return {contactList: data.contactList, currentUser}
+    },
+    children: [
+      {
+        path: 'chat/:chatToId',
+        element: <ChatRoom/>
+      }
+    ]
   },
   {
     path: '/set-avatar',
@@ -29,7 +40,7 @@ const router = createBrowserRouter([
       if (!data.status) {
         return data
       } else {
-        await localforage.setItem('chat-app-user', data.user)
+        localStorage.setItem('chat-app-user', JSON.stringify(data.user))
         return redirect('/login')
       }
     }
@@ -45,8 +56,13 @@ const router = createBrowserRouter([
       if (!data.status) {
         return data
       } else {
-        localforage.setItem('chat-app-user', data.user)
-        return redirect(`/set-avatar`)
+        localStorage.setItem('chat-app-user', JSON.stringify(data.user))
+        const currentUser = JSON.parse(localStorage.getItem('chat-app-user'))
+        if (currentUser.avatar) {
+          return redirect('/')
+        } else {
+          return redirect(`/set-avatar`)
+        }
       }
     }
   }

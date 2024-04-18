@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import LoadingSvg from '../assets/loading.svg'
-import localforage from 'localforage'
 const baseURL = `http://localhost:1000/api/auth`
 export default function SetAvatar() {
   const baseUrl = `https://api.multiavatar.com/413587653`
@@ -56,10 +55,10 @@ export default function SetAvatar() {
   const handleSetAvatar = async () => {
     console.log(avatar)
     if (!avatar) return
-    const currentUser = await localforage.getItem('chat-app-user')
+    const currentUser = JSON.parse(localStorage.getItem('chat-app-user'))
     try {
-      const {data} = await axios.post(`${baseURL}/set-avatar`, { id: currentUser.id, avatar })
-      await localforage.setItem('chat-app-user', data.user)
+      const {data} = await axios.post(`${baseURL}/set-avatar`, { id: currentUser._id, avatar })
+      localStorage.setItem('chat-app-user', JSON.stringify(data.user))
       navigate('/')
     } catch (error) {
       console.log(error)
@@ -77,6 +76,7 @@ export default function SetAvatar() {
   }, [])
   return (
     <Container>
+      <h1 style={{color: 'white'}}>Please pick an avatar as your avatar</h1>
       {
         loading ? <img src={LoadingSvg}/> : <AvatarList>
         {
@@ -111,6 +111,7 @@ const AvatarList = styled.div`
     font-size: 14px;
     padding: 0;
     background-color: transparent;
+    text-decoration: underline;
   }
   img {
     width: 4rem;
