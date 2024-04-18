@@ -1,16 +1,5 @@
-import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
 import styled from 'styled-components'
-import localforage from 'localforage'
-export default function UserForm({children}) {
-  const navigate = useNavigate()
-  useEffect(() => {
-    const checkUser = async () => {
-      const user = await localforage.getItem('chat-app-user')
-      if (user) navigate('/')
-    }
-    checkUser()
-  })
+export default function Container({children}) {
   return (
     <>
       <FormContainer>
@@ -30,6 +19,20 @@ const FormContainer = styled.div`
   align-items: center;
   gap: 3rem;
   background-color: #131324;
+  button {
+    font-weight: 800;
+    background-color: #997af0;
+    color: #ffffff;
+    padding: 1rem;
+    text-transform: uppercase;
+    border: 0;
+    transition: 0.5s ease-in-out;
+    font-size: 1rem;
+    cursor: pointer;
+    &:hover {
+      background-color: #4e0eff;
+    }
+  }
   form {
     width: 28rem;
     display: flex;
@@ -38,21 +41,7 @@ const FormContainer = styled.div`
     padding: 6rem 5rem;
     border-radius: 0.5rem;
     background-color: #ffffff;
-    button[type='submit'] {
-      font-weight: 800;
-      background-color: #997af0;
-      color: #ffffff;
-      padding: 1rem;
-      border: 0;
-      border: 1px solid #dddddd;
-      text-transform: uppercase;
-      transition: 0.5s ease-in-out;
-      font-size: 1rem;
-      cursor: pointer;
-      &:hover {
-        background-color: #4e0eff;
-      }
-    }
+    
     .footer {
       font-size: 14px;
       text-align: center;

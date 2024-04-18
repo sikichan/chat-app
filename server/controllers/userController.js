@@ -1,6 +1,5 @@
-const User = require('../models/User')
-// const bcrypt = require('bcrypt')
-const register = async (req, res, next) => {
+const {User} = require('../models/User')
+const register = async (req, res) => {
   console.log(req.body)
   const {username, password} = req.body
   const one = await User.findOne({ username })
@@ -12,13 +11,15 @@ const register = async (req, res, next) => {
       password
     })
     res.send({status: true, user: {
-      username, id: user._id
+      avatar: user.avatar,
+      username: user.username,
+      id: user._id
     }})
   }
   
 }
 
-const login = async (req, res, next) => {
+const login = async (req, res) => {
   const {username, password} = req.body
   const user = await User.findOne({ username })
   if (!user) {
@@ -27,13 +28,26 @@ const login = async (req, res, next) => {
     res.send({status: false, msg: 'The password is wrong'})
   } else {
     res.send({status: true, user: {
-      id: user.id,
-      username: user.username
+      id: user._id,
+      username: user.username,
+      avatar: user.avatar
     }})
   }
 }
 
+const setAvatar = async (req, res) => {
+  const { id, avatar } = req.body
+  console.log(id)
+  const user = await User.findOneAndUpdate({_id: id}, {avatar})
+  res.send({status: true, user: {
+    id: user._id,
+    username: user.username,
+    avatar: user.avatar
+  }})
+}
+
 module.exports = {
   register,
-  login
+  login,
+  setAvatar
 }

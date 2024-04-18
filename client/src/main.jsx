@@ -7,11 +7,16 @@ import Chat from './views/Chat.jsx'
 import Register from './views/Register.jsx'
 import Login from './views/Login.jsx'
 import localforage from 'localforage'
+import SetAvatar from './views/SetAvatar.jsx'
 const baseURL = `http://localhost:1000/api/auth`
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Chat/>
+  },
+  {
+    path: '/set-avatar',
+    element: <SetAvatar/>
   },
   {
     path: '/register',
@@ -34,15 +39,14 @@ const router = createBrowserRouter([
     element: <Login/>,
     action: async ({request}) => {
       const formData = Object.fromEntries(await request.formData())
-      console.log(formData)
       const results = validateUser(formData)
-      console.log(results)
       if (results) return results
       const {data} = await axios.post(`${baseURL}/login`, formData)
       if (!data.status) {
         return data
       } else {
-        return redirect('/')
+        localforage.setItem('chat-app-user', data.user)
+        return redirect(`/set-avatar`)
       }
     }
   }
