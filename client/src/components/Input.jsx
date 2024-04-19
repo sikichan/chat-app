@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import styled from 'styled-components'
 export default function Input(props) {
-  const {onClear, ...restProps} = props
+  const {...restProps} = props
   return (
     <InputDiv>
       <input {...restProps}/>
-      {/* <span>×</span> */}
     </InputDiv>
   )
 }

@@ -1,42 +1,68 @@
-import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import {Item} from '../components/ContactList'
-import Bubble from '../components/Bubble'
 import Editor from '../components/Editor'
+import Records from '../components/Records'
+import Default from "./Default"
+import defaultAvatar from '../assets/react.svg'
 import { useEffect } from 'react'
-export default function ChatRoom() {
-  const { chatToId } = useParams()
+export default function ChatRoom({chatUser, currentUser, socket}) {
+
   async function handleSend(value) {
-    console.log(value)
+    console.log(value, socket.current.connected)
+    socket.current.emit('send-msg', {
+      to: chatUser._id,
+      from: currentUser._id,
+      msg: value
+    })
+   
   }
+
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on('msg-receive', (msg) => {
+        console.log(msg)
+      })
+    }
+  }, [socket, chatUser])
+
   return (
     <ChatRoomContainer>
-      <header>
-        {/* <Item contact={} /> */}
-      </header>
-      <div className='records'>
-        <Bubble isMe={true}>sdfafasf</Bubble>
-      </div>
-      <Editor onSend={handleSend}/>
+      {
+      chatUser ? (
+        <>
+        <header>
+          <img src={chatUser.avatar || defaultAvatar} alt='' />
+          <span>{chatUser.username}</span>
+        </header>
+        <Records/>
+        <Editor onSend={handleSend}/>
+      </>
+      ) : <Default/>
+    }
     </ChatRoomContainer>
   )
 }
 
 const ChatRoomContainer = styled.div`
+  flex: 1;
   display: flex;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
-  padding: 1rem;
+  background-color: #fff;
   header {
-    background-color: #fff;
     position: fixed;
     width: 100%;
     color: #36167a;
+    height: 60px;
+    line-height: 60px;
+    padding: 0 1rem;
+    img {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      margin-right: 1rem;
+      vertical-align: middle;
+    }
   }
-  .records {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: scroll;
-  }
+  
 `

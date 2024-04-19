@@ -8,19 +8,28 @@ import Register from './views/Register.jsx'
 import Login from './views/Login.jsx'
 import SetAvatar from './views/SetAvatar.jsx'
 import ChatRoom from './views/ChatRoom.jsx'
+import Default from './views/Default.jsx'
 const baseURL = `http://localhost:1000/api/auth`
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Chat/>,
     loader: async () => {
-      const currentUser = JSON.parse(localStorage.getItem('chat-app-user'))
-      const {data} = await axios.get(`${baseURL}/contact-list/${currentUser._id}`)
-      return {contactList: data.contactList, currentUser}
+      try {
+        const currentUser = JSON.parse(localStorage.getItem('chat-app-user'))
+        const {data} = await axios.get(`${baseURL}/contact-list/${currentUser._id}`)
+        return {contactList: data.contactList, currentUser}
+      } catch(err) {
+        return redirect('/login')
+      }
     },
     children: [
+      // {
+      //   index: true,
+      //   element: <Default/>
+      // },
       {
-        path: 'chat/:chatToId',
+        path: 'chat',
         element: <ChatRoom/>
       }
     ]
