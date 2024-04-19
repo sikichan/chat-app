@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import react from '../assets/react.svg'
 import { Link, useParams } from 'react-router-dom'
-const Item = ({contact}) => {
+export const Item = ({contact}) => {
   const {chatToId} = useParams()
   
   return (
