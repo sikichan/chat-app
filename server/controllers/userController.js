@@ -1,4 +1,4 @@
-const {User} = require('../models/User')
+const {User} = require('../models')
 const register = async (req, res) => {
   console.log(req.body)
   const {username, password} = req.body

@@ -51,14 +51,13 @@ export default function ContactList({datas, chatUser, currentUser, onSelect}) {
 const Contacts = styled.div`
   background-color: #292152;
   width: 25%;
-  min-width: 300px;
+  min-width: 240px;
   position: relative;
-  
+  display: flex;
+  flex-direction: column;
   h3 {
     text-align: center;
     text-transform: uppercase;
-    position: sticky;
-    top: 0;
     background-color: #626291;
     height: 60px;
     line-height: 60px;
@@ -67,10 +66,8 @@ const Contacts = styled.div`
   ul {
     display: flex;
     flex-direction: column;
-    padding: 1rem 2rem 8rem;
-    justify-content: space-between;
+    padding: 1rem 1rem;
     gap: 0.7rem;
-    height: 100%;
     flex: 1;
     overflow-y: auto;
     p {
@@ -115,8 +112,6 @@ const Contacts = styled.div`
     }
   }
   .current-user {
-    position: sticky;
-    bottom: 0;
     background-color: #303066;
     color: #70ef62;
     padding: 1rem;

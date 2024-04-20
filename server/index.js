@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
-const userRoutes = require('./routes/userRoutes')
+const routes = require('./routes')
 const app = express()
 const socketIO = require('socket.io')
 require('dotenv').config()
@@ -9,7 +9,7 @@ require('dotenv').config()
 app.use(cors())
 app.use(express.json())
 
-app.use('/api/auth', userRoutes)
+app.use('/api/auth', routes)
 
 mongoose.connect(process.env.MONGO_URL).then(() => {
   console.log('MongoDB Connection Successful')
@@ -30,19 +30,16 @@ const io = socketIO(server, {
 global.onlineUser = new Map()
 io.on('connection', (socket) => {
   global.chatSocket = socket
-  socket.emit('msg-receive', 'welcome...')
   socket.on('add-user', (userId) => {
     onlineUser.set(userId, socket.id)
     console.log(onlineUser)
   })
 
   socket.on('send-msg', (data) => {
-    // console.log('ssss', data)
-
-    const toId = onlineUser.get(data.to)
+    const toId = onlineUser.get(data.receiver)
     if (toId) {
       console.log('send-msg: ', data)
-      socket.to(toId).emit('msg-receive', data.msg)
+      socket.to(toId).emit('msg-receive', data)
     }
   })
 })

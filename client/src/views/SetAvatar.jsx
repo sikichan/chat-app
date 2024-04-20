@@ -25,7 +25,7 @@ export default function SetAvatar() {
       reader.onerror = reject
     })
   }
-  const fetchAvatars = async (randomStr = 9) => {
+  const fetchAvatars = async (randomStr = String(Math.random()).slice(-3)) => {
     setLoading(true)
     try {
       const array = [];

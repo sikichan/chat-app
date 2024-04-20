@@ -3,26 +3,63 @@ import Editor from '../components/Editor'
 import Records from '../components/Records'
 import Default from "./Default"
 import defaultAvatar from '../assets/react.svg'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+const baseURL = `http://localhost:1000/api/auth`
 export default function ChatRoom({chatUser, currentUser, socket}) {
 
+  const [messages, setMessages] = useState([])
+  
   async function handleSend(value) {
     console.log(value, socket.current.connected)
-    socket.current.emit('send-msg', {
-      to: chatUser._id,
-      from: currentUser._id,
-      msg: value
-    })
-   
+    const msgData = {
+      receiver: chatUser._id,
+      sender: currentUser._id,
+      message: value
+    }
+    const {data} = await axios.post(`${baseURL}/add-msg`, msgData)
+    const {newMessage} = data
+    socket.current.emit('send-msg', newMessage)
+    setMessages([
+      ...messages,
+      {
+        ...newMessage,
+        key: newMessage._id,
+        fromSelf: newMessage.sender === currentUser._id
+      }
+    ])
   }
+
+  useEffect(() => {
+    if (chatUser && currentUser) {
+      const fetchMsgs = async () => {
+        const { data } = await axios.post(`${baseURL}/get-msgs`, {
+          receiver: chatUser._id,
+          sender: currentUser._id
+        })
+        console.log(data)
+        setMessages(data.messages)
+      }
+      fetchMsgs()
+    }
+    return () => setMessages([])
+  }, [chatUser, currentUser])
 
   useEffect(() => {
     if (socket.current) {
       socket.current.on('msg-receive', (msg) => {
-        console.log(msg)
+        console.log('msg:;;;', msg)
+        setMessages([
+          ...messages,
+          {
+            ...msg,
+            key: msg._id,
+            fromSelf: msg.sender === currentUser._id
+          }
+        ])
       })
     }
-  }, [socket, chatUser])
+  }, [socket, chatUser, messages, currentUser._id])
 
   return (
     <ChatRoomContainer>
@@ -33,7 +70,7 @@ export default function ChatRoom({chatUser, currentUser, socket}) {
           <img src={chatUser.avatar || defaultAvatar} alt='' />
           <span>{chatUser.username}</span>
         </header>
-        <Records/>
+        <Records messages={messages}/>
         <Editor onSend={handleSend}/>
       </>
       ) : <Default/>
