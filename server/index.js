@@ -5,10 +5,14 @@ const routes = require('./routes')
 const app = express()
 const socketIO = require('socket.io')
 require('dotenv').config()
-
-app.use(cors())
+const cookieParser = require('cookie-parser')
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST'],
+  credentials: true
+}))
+app.use(cookieParser())
 app.use(express.json())
-
 app.use('/api/auth', routes)
 
 mongoose.connect(process.env.MONGO_URL).then(() => {

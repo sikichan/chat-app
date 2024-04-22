@@ -1,3 +1,4 @@
+
 const {User} = require('../models')
 const register = async (req, res) => {
   console.log(req.body)
@@ -16,8 +17,8 @@ const register = async (req, res) => {
       _id: user._id
     }})
   }
-  
 }
+
 
 const login = async (req, res) => {
   const {username, password} = req.body

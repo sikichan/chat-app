@@ -1,13 +1,13 @@
-const mongoose= require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 
-const UserScheme = new Schema({
+const UserScheme = new mongoose.Schema({
   username: String,
   password: String,
   avatar: String
 })
 
-const MessageSchema = new Schema({
+const MessageSchema = new mongoose.Schema({
   message: {
     type: String,
     required: true
