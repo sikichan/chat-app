@@ -76,10 +76,7 @@ const setAvatar = async (req, res) => {
 const getContactList = async (req, res) => {
   const currentUserId = req.params.id
   const contactList = await Users.find({_id: {$ne: currentUserId}},  ).select(['username', 'avatar'])
-  res.send({
-    status: true,
-    contactList
-  })
+  res.status(201).json({contactList})
 }
 module.exports = {
   register,

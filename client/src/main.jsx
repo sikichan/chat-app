@@ -17,8 +17,8 @@ const router = createBrowserRouter([
     loader: async () => {
       try {
         const currentUser = JSON.parse(localStorage.getItem('chat-app-user'))
-        const {data} = await axios.get(`${baseURL}/contact-list/${currentUser._id}`)
-        return {contactList: data.contactList, currentUser}
+        // const {data} = await axios.get(`${baseURL}/contact-list/${currentUser._id}`)
+        return {currentUser}
       } catch(err) {
         return redirect('/login')
       }

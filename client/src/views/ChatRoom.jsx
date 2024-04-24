@@ -11,7 +11,7 @@ export default function ChatRoom({chatUser, currentUser, socket}) {
   const [messages, setMessages] = useState([])
   
   async function handleSend(value) {
-    console.log(value, socket.current.connected)
+    console.log(value, socket.connected)
     const msgData = {
       receiver: chatUser._id,
       sender: currentUser._id,
@@ -19,7 +19,7 @@ export default function ChatRoom({chatUser, currentUser, socket}) {
     }
     const {data} = await axios.post(`${baseURL}/add-msg`, msgData)
     const {newMessage} = data
-    socket.current.emit('send-msg', newMessage)
+    socket.emit('send-msg', newMessage)
     setMessages([
       ...messages,
       {
@@ -37,7 +37,6 @@ export default function ChatRoom({chatUser, currentUser, socket}) {
           receiver: chatUser._id,
           sender: currentUser._id
         })
-        console.log(data)
         setMessages(data.messages)
       }
       fetchMsgs()
@@ -46,18 +45,19 @@ export default function ChatRoom({chatUser, currentUser, socket}) {
   }, [chatUser, currentUser])
 
   useEffect(() => {
-    if (socket.current) {
-      socket.current.on('msg-receive', (msg) => {
-        console.log('msg:;;;', msg)
-        setMessages([
-          ...messages,
-          {
-            ...msg,
-            key: msg._id,
-            fromSelf: msg.sender === currentUser._id
-          }
-        ])
-      })
+    socket.on('msg-receive', (msg) => {
+      console.log('msg:;;;', msg)
+      setMessages([
+        ...messages,
+        {
+          ...msg,
+          key: msg._id,
+          fromSelf: msg.sender === currentUser._id
+        }
+      ])
+    })
+    return () => {
+      socket.off('msg-receive')
     }
   }, [socket, chatUser, messages, currentUser._id])
 

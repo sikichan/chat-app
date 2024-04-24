@@ -1,10 +1,12 @@
+import { useEffect } from 'react'
 import defaultAvatar from '../assets/react.svg'
 import styled from 'styled-components'
 export const Item = ({contact, chatUser, onSelect}) => {
   
   return (
 
-      <li onClick={() => onSelect(contact)} className={chatUser?._id === contact._id ? 'selected': ''}>   
+      <li onClick={() => onSelect(contact)} className={[chatUser?._id === contact._id ? 'selected': '', contact.online ? 'online': ''].join(' ')}
+        >   
       {
         !contact.avatar ? <img src={defaultAvatar} alt=""/> :
         <img src={contact.avatar} alt=""/>
@@ -24,16 +26,12 @@ export default function ContactList({datas, chatUser, currentUser, onSelect}) {
       <ul>
         {
           datas.map(contact => 
-            // <Link
-            // key={contact._id}
-            // to={`/chat/${contact._id}`}>
             <Item 
               key={contact._id}
               chatUser={chatUser}
               onSelect={onSelect}
               contact={contact}
             />
-            // </Link>
           )
         }
         <p> - End - </p>
@@ -109,6 +107,9 @@ const Contacts = styled.div`
       background: #551dee;
       color: #ffffff;
       font-weight: 800;
+    }
+    .online {
+      color: #70ef62;
     }
   }
   .current-user {

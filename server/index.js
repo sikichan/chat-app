@@ -34,9 +34,11 @@ const io = socketIO(server, {
 const onlineUser = new Map()
 io.on('connection', (socket) => {
   global.chatSocket = socket
-  socket.on('add-user', (userId) => {
+  socket.on('add-user', async (userId) => {
     onlineUser.set(userId, socket.id)
-    console.log(onlineUser)
+    
+    io.emit('refresh-contacts', Array.from(onlineUser.keys()))
+    console.log(onlineUser.keys())
   })
 
   socket.on('send-msg', (data) => {
@@ -46,4 +48,5 @@ io.on('connection', (socket) => {
       socket.to(toId).emit('msg-receive', data)
     }
   })
+
 })

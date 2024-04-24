@@ -1,36 +1,53 @@
-import { createContext, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useLoaderData} from 'react-router-dom'
 import ContactList from "../components/ContactList"
-import { io } from 'socket.io-client'
 import styled from 'styled-components'
 import ChatRoom from "./ChatRoom"
-
-export const SocketContext = createContext()
+import axios from "axios"
+import SocketIo from 'socket.io-client'
+const socket = SocketIo.connect(`http://localhost:1000`)
+console.log(socket, 'SOCKET')
+const baseURL = `http://localhost:1000/api`
 
 export default function Chat() {
-  const {contactList, currentUser} = useLoaderData()
+  const {currentUser} = useLoaderData()
+  const [contacts, setContacts] = useState([])
   const [chatUser, setChatUser] = useState(null)
-  const socket = useRef()
   const onSelect = (chatTo) => {
     console.log(chatTo)
     setChatUser(chatTo)
   }
 
   useEffect(() => {
-   
-    if (!socket.current) {
-      socket.current = io(`http://localhost:1000`)
-      console.log('currentUser=====')
-      socket.current.emit('add-user', currentUser._id)
-    }
+    socket.on('refresh-contacts', async (userIds) => {
+      const {data} = await axios.get(`${baseURL}/contact-list/${currentUser._id}`)
+      console.log('!!!!!', data, userIds)
+      if (data) {
+        const list = data.contactList.map(c => {
+          c.online = userIds.includes(c._id)
+          return c
+        })
+        list.sort((a, b) => {
+          if (a.online && !b.online) {
+            return -1
+          }
+          if (!a.online && b.online) {
+            return 1
+          }
+          return 0
+        })
+        setContacts(list)
+      }
+    })
+    socket.emit('add-user', currentUser._id)
     return () => {
-      socket.current.disconnect()
-      socket.current = null
+      console.log('leave')
+      socket.off('refresh-contacts')
     }
   }, [])
   return (
     <Container>
-      <ContactList datas={contactList} chatUser={chatUser} currentUser={currentUser} onSelect={onSelect} />
+      <ContactList datas={contacts} socket={socket} chatUser={chatUser} currentUser={currentUser} onSelect={onSelect} />
       <ChatRoom chatUser={chatUser} socket={socket} currentUser={currentUser}/>
     </Container>)
 }
