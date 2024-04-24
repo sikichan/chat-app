@@ -17,11 +17,17 @@ export default function Chat() {
   }
 
   useEffect(() => {
-    if (currentUser) {
+   
+    if (!socket.current) {
       socket.current = io(`http://localhost:1000`)
+      console.log('currentUser=====')
       socket.current.emit('add-user', currentUser._id)
     }
-  }, [currentUser])
+    return () => {
+      socket.current.disconnect()
+      socket.current = null
+    }
+  }, [])
   return (
     <Container>
       <ContactList datas={contactList} chatUser={chatUser} currentUser={currentUser} onSelect={onSelect} />

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import LoadingSvg from '../assets/loading.svg'
-const baseURL = `http://localhost:1000/api/auth`
+const baseURL = `http://localhost:1000/api`
 export default function SetAvatar() {
   const baseUrl = `https://api.multiavatar.com/413587653`
   const [list, setList] = useState([])

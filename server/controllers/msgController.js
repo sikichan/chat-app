@@ -1,9 +1,9 @@
-const {Message} = require('../models')
+const {Messages} = require('../models')
 
 module.exports.addMsg = async (req, res) => {
   const {sender, receiver, message} = req.body
   try {
-    const newMessage = await Message.create({
+    const newMessage = await Messages.create({
       sender,
       receiver,
       message,
@@ -24,7 +24,7 @@ module.exports.getMsgs = async (req, res) => {
     status: false,
     msg: 'sender, receiver required'
   })
-  const msgs = await Message.find({
+  const msgs = await Messages.find({
     users:{$all: [sender, receiver]}})
     .sort({createdAt: 1})
   const messages = msgs.map(msg => {

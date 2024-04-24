@@ -2,14 +2,14 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import axios from 'axios'
 import './index.css'
+import 'react-toastify/dist/ReactToastify.css'
 import { createBrowserRouter, RouterProvider, redirect } from 'react-router-dom'
 import Chat from './views/Chat.jsx'
 import Register from './views/Register.jsx'
 import Login from './views/Login.jsx'
 import SetAvatar from './views/SetAvatar.jsx'
 import ChatRoom from './views/ChatRoom.jsx'
-import Default from './views/Default.jsx'
-const baseURL = `http://localhost:1000/api/auth`
+const baseURL = `http://localhost:1000/api`
 const router = createBrowserRouter([
   {
     path: '/',
@@ -24,10 +24,6 @@ const router = createBrowserRouter([
       }
     },
     children: [
-      // {
-      //   index: true,
-      //   element: <Default/>
-      // },
       {
         path: 'chat',
         element: <ChatRoom/>
@@ -40,40 +36,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/register',
-    element: <Register/>,
-    action: async ({request}) => {
-      const formData = Object.fromEntries(await request.formData())
-      const results = validateUser(formData)
-      if (results) return results
-      const {data} = await axios.post(`${baseURL}/register`, formData)
-      if (!data.status) {
-        return data
-      } else {
-        localStorage.setItem('chat-app-user', JSON.stringify(data.user))
-        return redirect('/login')
-      }
-    }
+    element: <Register/>
   },
   {
     path: '/login',
-    element: <Login/>,
-    action: async ({request}) => {
-      const formData = Object.fromEntries(await request.formData())
-      const results = validateUser(formData)
-      if (results) return results
-      const {data} = await axios.post(`${baseURL}/login`, formData)
-      if (!data.status) {
-        return data
-      } else {
-        localStorage.setItem('chat-app-user', JSON.stringify(data.user))
-        const currentUser = JSON.parse(localStorage.getItem('chat-app-user'))
-        if (currentUser.avatar) {
-          return redirect('/')
-        } else {
-          return redirect(`/set-avatar`)
-        }
-      }
-    }
+    element: <Login/>
   }
 ])
 
@@ -83,12 +50,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </RouterProvider>
   </React.StrictMode>,
 )
-
-function validateUser(user) {
-  if (!user.username.trim()) {
-    return {msg: 'Username is required'}
-  }
-  if (!user.password.trim()) {
-    return {msg: 'Password is required'}
-  }
-}

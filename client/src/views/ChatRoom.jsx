@@ -5,7 +5,7 @@ import Default from "./Default"
 import defaultAvatar from '../assets/react.svg'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-const baseURL = `http://localhost:1000/api/auth`
+const baseURL = `http://localhost:1000/api`
 export default function ChatRoom({chatUser, currentUser, socket}) {
 
   const [messages, setMessages] = useState([])

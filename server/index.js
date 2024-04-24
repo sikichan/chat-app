@@ -13,7 +13,7 @@ app.use(cors({
 }))
 app.use(cookieParser())
 app.use(express.json())
-app.use('/api/auth', routes)
+app.use('/api', routes)
 
 mongoose.connect(process.env.MONGO_URL).then(() => {
   console.log('MongoDB Connection Successful')
@@ -31,7 +31,7 @@ const io = socketIO(server, {
     credentials: true
   }
 })
-global.onlineUser = new Map()
+const onlineUser = new Map()
 io.on('connection', (socket) => {
   global.chatSocket = socket
   socket.on('add-user', (userId) => {
