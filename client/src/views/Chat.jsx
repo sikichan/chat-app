@@ -14,7 +14,6 @@ export default function Chat() {
   const [contacts, setContacts] = useState([])
   const [chatUser, setChatUser] = useState(null)
   const onSelect = (chatTo) => {
-    console.log(chatTo)
     setChatUser(chatTo)
   }
 

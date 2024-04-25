@@ -38,7 +38,7 @@ io.on('connection', (socket) => {
     onlineUser.set(userId, socket.id)
     
     io.emit('refresh-contacts', Array.from(onlineUser.keys()))
-    console.log(onlineUser.keys())
+
   })
 
   socket.on('send-msg', (data) => {
@@ -47,6 +47,16 @@ io.on('connection', (socket) => {
       console.log('send-msg: ', data)
       socket.to(toId).emit('msg-receive', data)
     }
+  })
+
+  socket.on('disconnect', () => {
+    onlineUser.forEach((v, k) => {
+      if (v === socket.id) {
+        onlineUser.delete(k)
+      }
+    })
+    console.log('...leave...', onlineUser)
+    io.emit('refresh-contacts', Array.from(onlineUser.keys()))
   })
 
 })

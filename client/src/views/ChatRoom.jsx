@@ -32,6 +32,7 @@ export default function ChatRoom({chatUser, currentUser, socket}) {
 
   useEffect(() => {
     if (chatUser && currentUser) {
+      console.log('chatUser:', chatUser)
       const fetchMsgs = async () => {
         const { data } = await axios.post(`${baseURL}/get-msgs`, {
           receiver: chatUser._id,
@@ -68,7 +69,8 @@ export default function ChatRoom({chatUser, currentUser, socket}) {
         <>
         <header>
           <img src={chatUser.avatar || defaultAvatar} alt='' />
-          <span>{chatUser.username}</span>
+          <span className='username'>{chatUser.username}</span>
+          <span className={['status', chatUser.online ? 'online': 'offline'].join(' ')}>{chatUser.online ? 'online': 'offline'}</span>
         </header>
         <Records messages={messages}/>
         <Editor onSend={handleSend}/>
@@ -99,6 +101,19 @@ const ChatRoomContainer = styled.div`
       border-radius: 50%;
       margin-right: 1rem;
       vertical-align: middle;
+    }
+    .online {
+      color: #36e933;
+    }
+    .offline {
+      color: grey;
+    }
+    .status {
+      font-size: 12px;
+      text-decoration: underline;
+    }
+    .username {
+      margin-right: 0.5rem;
     }
   }
   
