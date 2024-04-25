@@ -4,6 +4,7 @@ import UserForm from '../components/Container'
 import Logo from '../assets/react.svg'
 import Input from '../components/Input'
 import { ToastContainer, toast } from 'react-toastify'
+import sha256 from 'crypto-js/sha256'
 import axios from 'axios'
 const baseURL = `http://localhost:1000/api`
 export default function Login() {
@@ -26,7 +27,10 @@ export default function Login() {
   }
   const handleLogin = async (e) => {
     e.preventDefault()
-    const {data} = await axios.post(`${baseURL}/login`, user, {
+    const {data} = await axios.post(`${baseURL}/login`, {
+      username: user.username,
+      password: sha256(user.password).toString()
+    }, {
       withCredentials: true
     })
     if (data.errors) {

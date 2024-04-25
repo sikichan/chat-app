@@ -4,11 +4,11 @@ import UserForm from '../components/Container'
 import Logo from '../assets/react.svg'
 import Input from '../components/Input'
 import { ToastContainer, toast } from 'react-toastify'
+import sha256 from 'crypto-js/sha256'
 import axios from 'axios'
 const baseURL = `http://localhost:1000/api`
 
 export default function Register() {
-  const location = useLocation()
   const [user, setUser] = useState({ username: '', password: '' })
   const navigate = useNavigate()
   const genError = (errors) => {
@@ -26,7 +26,10 @@ export default function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault()
-    const {data} = await axios.post(`${baseURL}/register`, user)
+    const {data} = await axios.post(`${baseURL}/register`, {
+      username: user.username,
+      password: sha256(user.password).toString()
+    })
       if (data.errors) {
         genError(data.errors)
       } else {
